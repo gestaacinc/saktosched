@@ -35,11 +35,32 @@
             </div>
             <!-- Main Content -->
             <div class="flex-1 flex flex-col overflow-hidden">
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        <!-- Header content can go here -->
+              <!-- This is the new, corrected code for layouts/admin.blade.php -->
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16">
+                        <div class="flex">
+                            <!-- Logo can go here if needed -->
+                        </div>
+
+                        <!-- Right Side Of Navbar -->
+                        <div class="flex items-center ml-6">
+                            <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                            
+                            <!-- Authentication -->
+                            <form method="POST" action="{{ route('logout') }}" class="ml-4">
+                                @csrf
+                                <a href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
+                                                    this.closest('form').submit();"
+                                    class="text-sm text-gray-500 hover:text-gray-700">
+                                    {{ __('Log Out') }}
+                                </a>
+                            </form>
+                        </div>
                     </div>
-                </header>
+                </div>
+            </header>
                 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
                     <div class="container mx-auto px-6 py-8">
                         {{ $slot }}

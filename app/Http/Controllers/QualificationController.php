@@ -2,23 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Qualification;
+use Illuminate\Http\Request;
 
 class QualificationController extends Controller
 {
-    //
     public function show(Qualification $qualification)
     {
-        // Eager load schedules with the count of reserved slots
         $schedules = $qualification->assessmentSchedules()
-            ->withCount('bookings')
             ->where('status', 'pending')
+            ->withCount('bookings')
+            ->orderBy('schedule_date', 'asc')
             ->get();
+        
+        $allQualifications = Qualification::where('is_active', true)->orderBy('title')->get();
 
-        return view('qualifications.show', [
-            'qualification' => $qualification,
-            'schedules' => $schedules,
-        ]);
+        return view('qualifications.show', compact('qualification', 'schedules', 'allQualifications'));
     }
 }
