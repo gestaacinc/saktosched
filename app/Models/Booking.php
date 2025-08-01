@@ -24,6 +24,7 @@ class Booking extends Model
         'booker_name',      // <-- ADD THIS
         'booker_email',     // <-- ADD THIS
         'booker_phone',     // <-- ADD THIS
+        'payment_proof_path', // <-- ADD THIS
     ];
 
     public function user(): BelongsTo

@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/qualifications/{qualification}', [QualificationController::class, 'show'])->name('qualifications.show');
 Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+Route::post('/bookings/{booking}/upload-proof', [BookingController::class, 'uploadProof'])->name('bookings.upload.proof');
 Route::get('/inquiry', [PublicInstitutionalInquiryController::class, 'create'])->name('inquiry.create');
 Route::post('/inquiry', [PublicInstitutionalInquiryController::class, 'store'])->name('inquiry.store');
 Route::post('/propose-schedule', [ProposeScheduleController::class, 'store'])->name('schedules.propose');

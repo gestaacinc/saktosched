@@ -8,10 +8,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use App\Mail\BookingConfirmed;
 
 class BookingController extends Controller
 {
@@ -31,20 +29,12 @@ class BookingController extends Controller
             $slots_available = $schedule->max_slots - $slots_booked;
 
             if ($validatedData['slots_reserved'] > $slots_available) {
-                throw ValidationException::withMessages([
-                    'slots_reserved' => "Sorry, there are only {$slots_available} slots available.",
-                ]);
+                throw ValidationException::withMessages(['slots_reserved' => "Sorry, only {$slots_available} slots are available."]);
             }
-
-            // THE FIX: Prevent duplicate bookings for the same email on the same schedule
-            $existingBooking = Booking::where('assessment_schedule_id', $schedule->id)
-                                      ->where('booker_email', $validatedData['booker_email'])
-                                      ->exists();
-
+            
+            $existingBooking = Booking::where('assessment_schedule_id', $schedule->id)->where('booker_email', $validatedData['booker_email'])->exists();
             if ($existingBooking) {
-                throw ValidationException::withMessages([
-                    'booker_email' => "This email address has already been used to book a slot for this schedule.",
-                ]);
+                throw ValidationException::withMessages(['booker_email' => "This email has already booked a slot for this schedule."]);
             }
 
             DB::beginTransaction();
@@ -59,7 +49,7 @@ class BookingController extends Controller
                 'assessment_schedule_id' => $schedule->id,
                 'slots_reserved' => $validatedData['slots_reserved'],
                 'reservation_fee_paid' => 35.00 * $validatedData['slots_reserved'],
-                'payment_status' => 'reservation_paid',
+                'payment_status' => 'pending_payment', // <-- NEW STATUS
                 'booker_name' => $validatedData['booker_name'],
                 'booker_email' => $validatedData['booker_email'],
                 'booker_phone' => $validatedData['booker_phone'],
@@ -67,12 +57,10 @@ class BookingController extends Controller
 
             DB::commit();
 
-            // THE FIX: Send the confirmation email
-            Mail::to($booking->booker_email)->send(new BookingConfirmed($booking));
-
             return response()->json([
                 'success' => true,
-                'message' => 'Your slot(s) have been successfully reserved! A confirmation email has been sent.',
+                'booking_id' => $booking->id,
+                'amount' => $booking->reservation_fee_paid,
             ]);
 
         } catch (ValidationException $e) {
@@ -81,5 +69,24 @@ class BookingController extends Controller
             DB::rollBack();
             return response()->json(['message' => 'An unexpected error occurred. Please try again.'], 500);
         }
+    }
+
+    public function uploadProof(Request $request, Booking $booking)
+    {
+        $request->validate([
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+
+        $booking->update([
+            'payment_proof_path' => $path,
+            'payment_status' => 'pending_verification',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment proof uploaded! We are now verifying your payment. You will receive a confirmation email shortly.'
+        ]);
     }
 }
