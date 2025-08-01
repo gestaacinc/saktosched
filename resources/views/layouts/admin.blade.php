@@ -31,26 +31,23 @@
                     <a href="{{ route('admin.inquiries.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-all">
                         <span>Inquiries</span>
                     </a>
+                     <a href="{{ route('admin.proposals.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-all">
+                        <span>Proposals</span>
+                    </a>
                 </nav>
             </div>
             <!-- Main Content -->
             <div class="flex-1 flex flex-col overflow-hidden">
-              <!-- This is the new, corrected code for layouts/admin.blade.php -->
             <header class="bg-white shadow-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo can go here if needed -->
-                        </div>
-
-                        <!-- Right Side Of Navbar -->
+                    <div class="flex justify-end h-16">
                         <div class="flex items-center ml-6">
-                            <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                            <div class="font-medium text-base text-gray-800 mr-4">{{ Auth::user()->name }}</div>
                             
                             <!-- Authentication -->
-                            <form method="POST" action="{{ route('logout') }}" class="ml-4">
+                            <form method="POST" action="{{ route('admin.logout') }}">
                                 @csrf
-                                <a href="{{ route('logout') }}"
+                                <a href="{{ route('admin.logout') }}"
                                         onclick="event.preventDefault();
                                                     this.closest('form').submit();"
                                     class="text-sm text-gray-500 hover:text-gray-700">
@@ -63,6 +60,18 @@
             </header>
                 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
                     <div class="container mx-auto px-6 py-8">
+                        <!-- Session Messages -->
+                        @if (session('success'))
+                            <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        @if (session('error'))
+                            <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
                         {{ $slot }}
                     </div>
                 </main>

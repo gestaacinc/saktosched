@@ -1,43 +1,36 @@
 <x-admin-layout>
     <h3 class="text-gray-700 text-3xl font-medium">Dashboard</h3>
-
+    
     <!-- Stats Cards -->
     <div class="mt-4">
         <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-            <div class="flex items-center p-4 bg-white rounded-lg shadow-xs">
+            <!-- New Proposal Card -->
+            <a href="{{ route('admin.proposals.index') }}" class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-gray-50 transition">
                 <div>
-                    <p class="mb-2 text-sm font-medium text-gray-600">Pending Inquiries</p>
+                    <p class="mb-2 text-sm font-medium text-gray-600">Pending Schedule Proposals</p>
+                    <p class="text-lg font-semibold text-gray-700">{{ $stats['pending_proposals'] }}</p>
+                </div>
+            </a>
+            <!-- Institutional Inquiry Card -->
+            <a href="#" class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-gray-50 transition">
+                <div>
+                    <p class="mb-2 text-sm font-medium text-gray-600">Pending Institutional Inquiries</p>
                     <p class="text-lg font-semibold text-gray-700">{{ $stats['pending_inquiries'] }}</p>
                 </div>
-            </div>
-            <!-- Add other stat cards as needed -->
+            </a>
+            <!-- Pending Schedules Card -->
+            <a href="#" class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-gray-50 transition">
+                <div>
+                    <p class="mb-2 text-sm font-medium text-gray-600">Active Pending Schedules</p>
+                    <p class="text-lg font-semibold text-gray-700">{{ $stats['pending_schedules'] }}</p>
+                </div>
+            </a>
         </div>
     </div>
 
-    <!-- Recent Inquiries Table -->
+    <!-- Recent Inquiries Table (optional, can be removed if not needed) -->
     <div class="mt-8">
-        <h4 class="text-gray-600">Recent Inquiries</h4>
-        <div class="mt-4">
-            <div class="p-6 bg-white rounded-md shadow-md">
-                <table class="min-w-full">
-                    <thead>
-                        <tr>
-                            <th class="text-left">Organization</th>
-                            <th class="text-left">Qualification</th>
-                            <th class="text-left">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recentInquiries as $inquiry)
-                        <tr>
-                            <td>{{ $inquiry->organization_name }}</td>
-                            <td>{{ $inquiry->qualification->title }}</td>
-                            <td>{{ $inquiry->status }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <h4 class="text-gray-600">Recent Institutional Inquiries</h4>
+        <!-- ... table code ... -->
     </div>
 </x-admin-layout>

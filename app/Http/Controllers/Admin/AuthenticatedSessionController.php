@@ -34,17 +34,16 @@ class AuthenticatedSessionController extends Controller
             // CRITICAL: Check if the authenticated user is an admin
             if (Auth::user()->is_admin) {
                 $request->session()->regenerate();
-                // This is the correct redirect for admins.
                 return redirect()->intended(route('admin.dashboard'));
             }
 
-            // If a non-admin user tries to log in here, log them out immediately.
+            // If the user is NOT an admin, log them out immediately
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
         }
 
-        // If authentication fails or user is not an admin, redirect back with an error.
+        // If authentication fails or user is not an admin, redirect back with an error
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records or you are not an administrator.',
         ])->onlyInput('email');
@@ -58,7 +57,6 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        // After admin logout, redirect to the public homepage.
         return redirect('/');
     }
 }

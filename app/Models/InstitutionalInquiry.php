@@ -2,29 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-return new class extends Migration
+class InstitutionalInquiry extends Model
 {
-    public function up(): void
-    {
-        Schema::create('institutional_inquiries', function (Blueprint $table) {
-            $table->id();
-            $table->string('organization_name');
-            $table->string('representative_name');
-            $table->string('email');
-            $table->string('phone');
-            $table->foreignId('qualification_id')->constrained();
-            $table->integer('num_applicants');
-            $table->string('status')->default('pending'); // e.g., pending, verified, proposal_sent, confirmed
-            $table->timestamps();
-        });
-    }
+    use HasFactory;
 
-    public function down(): void
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'organization_name',
+        'representative_name',
+        'email',
+        'phone',
+        'qualification_id',
+        'num_applicants',
+        'status',
+    ];
+
+    /**
+     * Get the qualification associated with the inquiry.
+     */
+    public function qualification(): BelongsTo
     {
-        Schema::dropIfExists('institutional_inquiries');
+        return $this->belongsTo(Qualification::class);
     }
-};
+}
